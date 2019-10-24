@@ -16,8 +16,10 @@
 ###############################################################################
 
 project=wasabi
-cassandra=cassandra:2.1
-mysql=mysql:5.6
+#cassandra=cassandra:2.1
+cassandra=cassandra:3.11.4
+#mysql=mysql:5.6
+mysql=mysql:8.0.17
 docker_network=${project}_nw
 verify_default=false
 migration_default=false
@@ -240,8 +242,9 @@ start_mysql() {
   wmip=$(docker inspect --format "{{ .NetworkSettings.Networks.${docker_network}.IPAddress }}" ${project}-mysql)
   sql=$(cat << EOF
     create database if not exists ${project};
-    grant all privileges on ${project}.* to 'readwrite'@'localhost' identified by 'readwrite';
-    grant all on *.* to 'readwrite'@'%' identified by 'readwrite';
+    create user 'readwrite'@'localhost' IDENTIFIED WITH mysql_native_password BY 'readwrite';
+    grant all on ${project}.* to 'readwrite'@'localhost';
+    grant all on *.* to 'readwrite'@'localhost';
     flush privileges;
 EOF
 )
