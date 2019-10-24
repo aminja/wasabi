@@ -242,9 +242,8 @@ start_mysql() {
   wmip=$(docker inspect --format "{{ .NetworkSettings.Networks.${docker_network}.IPAddress }}" ${project}-mysql)
   sql=$(cat << EOF
     create database if not exists ${project};
-    create user 'readwrite'@'localhost' IDENTIFIED WITH mysql_native_password BY 'readwrite';
-    grant all on ${project}.* to 'readwrite'@'localhost';
-    grant all on *.* to 'readwrite'@'localhost';
+    CREATE USER 'readwrite'@'%' IDENTIFIED BY 'readwrite';
+    GRANT ALL PRIVILEGES ON *.* TO 'readwrite'@'%' WITH GRANT OPTION;
     flush privileges;
 EOF
 )
